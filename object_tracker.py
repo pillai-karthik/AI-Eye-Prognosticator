@@ -32,7 +32,7 @@ encoder = gdet.create_box_encoder(model_filename, batch_size=1)
 metric = nn_matching.NearestNeighborDistanceMetric('cosine', max_cosine_distance, nn_budget)
 tracker = Tracker(metric)
 
-vid = cv2.VideoCapture('./inputs/video4.mp4')
+vid = cv2.VideoCapture('./inputs/video2.mp4')
 #vid = cv2.VideoCapture('http://192.168.0.25:8080/video')#IP WebCam App
 #vid = cv2.VideoCapture(0)
 
@@ -115,7 +115,7 @@ while True:
         center_y = int(((bbox[1])+(bbox[3]))/2)
 
         if center_y <= int(3*height/6+height/20) and center_y >= int(3*height/6-height/20):
-            if class_name == 'person':# or class_name == 'car':
+            if class_name == 'truck' or class_name == 'car':#class_name == 'person'
                 counter.append(int(track.track_id))
                 current_count += 1
 
