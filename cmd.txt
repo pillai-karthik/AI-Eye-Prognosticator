@@ -2,3 +2,11 @@ d:
 cd D:\AI Eye Prognosticator
 conda activate tracker-cpu
 python object_tracker.py
+
+
+d:
+cd D:\AI Eye Prognosticator
+git add .
+git status
+git commit -m""
+git push origin master

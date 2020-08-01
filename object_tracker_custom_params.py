@@ -22,12 +22,15 @@ from tools import generate_detections as gdet
 ####CUSTOM PARAMETERS############################################################
 objectsToTrack=["person","car"]
 
-#0.5 Means line will be on middle of video vertically, small is closer to top
-bandMidLineWrtHeight=0.3
-#upperBound is height*upDownBoundWrtMidLine above mid line, similarly, lowerbound. Bigger the number, bigger is the area
-upDownBoundWrtMidLine=0.07
 
-inputVideo='./inputs/video2.mp4'
+lineOrientationHorizontal=True
+#0.5 Means line will be on middle of video vertically, small is closer to top
+bandMidLineWrtHeightOrWidth=0.5
+#upperBound is height*upDownBoundWrtMidLine above mid line, similarly, lowerbound. Bigger the number, bigger is the area
+upDownBoundWrtMidLine=0.05
+
+
+inputVideo='./inputs/video3.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 
@@ -125,17 +128,32 @@ while True:
             thickness = int(np.sqrt(64/float(j+1))*2)
             cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
 
+
+        center_y = int(((bbox[1]) + (bbox[3]))/2) 
+        center_x = int(((bbox[0]) + (bbox[2]))/2)
+
         height, width, _ = img.shape
-        cv2.line(img, (0, int(bandMidLineWrtHeight*height+upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeight*height+upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
-        cv2.line(img, (0, int(bandMidLineWrtHeight*height-upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeight*height-upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
 
-        center_y = int(((bbox[1])+(bbox[3]))/2)
+        if lineOrientationHorizontal:
+            #CREATE HORIZONTAL LINES (Zone or band)
+            cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
+            cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
 
-        if center_y <= int(bandMidLineWrtHeight*height+upDownBoundWrtMidLine*height) and center_y >= int(bandMidLineWrtHeight*height-upDownBoundWrtMidLine*height):
-            if class_name in objectsToTrack:
-                index=objectsToTrack.index(class_name)
-                current_count[index] += 1
-                counter[index].append(int(track.track_id))
+            if center_y <= int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height) and center_y >= int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height):
+                if class_name in objectsToTrack:
+                    index=objectsToTrack.index(class_name)
+                    current_count[index] += 1
+                    counter[index].append(int(track.track_id))
+        else:
+            #CREATE VERTICAL LINES (Zone or band)
+            cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
+            cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
+
+            if center_x <= int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width) and center_x >= int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width):
+                if class_name in objectsToTrack:
+                    index=objectsToTrack.index(class_name)
+                    current_count[index] += 1
+                    counter[index].append(int(track.track_id))
 
 
     initialHeight=60
