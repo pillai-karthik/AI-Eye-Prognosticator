@@ -22,19 +22,25 @@ from tools import generate_detections as gdet
 ####CUSTOM PARAMETERS############################################################
 objectsToTrack=["person","car"]
 
-
-lineOrientationHorizontal=True
-#0.5 Means line will be on middle of video vertically, small is closer to top
-bandMidLineWrtHeightOrWidth=0.5
-#upperBound is height*upDownBoundWrtMidLine above mid line, similarly, lowerbound. Bigger the number, bigger is the area
-upDownBoundWrtMidLine=0.05
-
-
-inputVideo='./inputs/video3.mp4'
+inputVideo='./inputs/video5.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 
 outputVideoName='output'
+
+
+####### COUNTING FEATURE (Total Count + Zonal Count)#######
+activateCounting=False
+lineOrientationHorizontal=True
+#0.5 Means line will be on middle of video vertically, small is closer to top
+bandMidLineWrtHeightOrWidth=0.3
+#upperBound is height*upDownBoundWrtMidLine above mid line, similarly, lowerbound. Bigger the number, bigger is the area
+upDownBoundWrtMidLine=0.05
+
+
+
+
+
 
 #############################################################CUSTOM PARAMETERS###
 
@@ -60,7 +66,7 @@ vid_width,vid_height = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vid.get(cv2.C
 out = cv2.VideoWriter('./data/video/'+outputVideoName+'.avi', codec, vid_fps, (vid_width, vid_height))
 
 from _collections import deque
-pts = [deque(maxlen=30) for _ in range(1000)]
+pts = [deque(maxlen=30) for _ in range(1000)]#more the maxlen, more longer is the tracker tail
 
 counter = []
 for i in objectsToTrack:
@@ -120,7 +126,7 @@ while True:
                     (255, 255, 255), 1)
 
         center = (int(((bbox[0]) + (bbox[2]))/2), int(((bbox[1])+(bbox[3]))/2))
-        pts[track.track_id].append(center)
+        pts[track.track_id].append(center)#pts stores track ids list and inside that list, it has old centres of objects
 
         for j in range(1, len(pts[track.track_id])):
             if pts[track.track_id][j-1] is None or pts[track.track_id][j] is None:
@@ -134,40 +140,46 @@ while True:
 
         height, width, _ = img.shape
 
-        if lineOrientationHorizontal:
-            #CREATE HORIZONTAL LINES (Zone or band)
-            cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
-            cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
+        if activateCounting:
+            if lineOrientationHorizontal:
+                #CREATE HORIZONTAL LINES (Zone or band)
+                cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
+                cv2.line(img, (0, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (width, int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height)), (0, 255, 0), thickness=2)
 
-            if center_y <= int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height) and center_y >= int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height):
-                if class_name in objectsToTrack:
-                    index=objectsToTrack.index(class_name)
-                    current_count[index] += 1
-                    counter[index].append(int(track.track_id))
-        else:
-            #CREATE VERTICAL LINES (Zone or band)
-            cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
-            cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
+                if center_y <= int(bandMidLineWrtHeightOrWidth*height+upDownBoundWrtMidLine*height) and center_y >= int(bandMidLineWrtHeightOrWidth*height-upDownBoundWrtMidLine*height):
+                    if class_name in objectsToTrack:
+                        index=objectsToTrack.index(class_name)
+                        current_count[index] += 1
+                        counter[index].append(int(track.track_id))
+            else:
+                #CREATE VERTICAL LINES (Zone or band)
+                cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
+                cv2.line(img, (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), 0), (int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width), height), (0, 255, 0), thickness=2)
 
-            if center_x <= int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width) and center_x >= int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width):
-                if class_name in objectsToTrack:
-                    index=objectsToTrack.index(class_name)
-                    current_count[index] += 1
-                    counter[index].append(int(track.track_id))
+                if center_x <= int(bandMidLineWrtHeightOrWidth*width+upDownBoundWrtMidLine*width) and center_x >= int(bandMidLineWrtHeightOrWidth*width-upDownBoundWrtMidLine*width):
+                    if class_name in objectsToTrack:
+                        index=objectsToTrack.index(class_name)
+                        current_count[index] += 1
+                        counter[index].append(int(track.track_id))
 
 
-    initialHeight=60
-    for objectName in objectsToTrack:
-        index=objectsToTrack.index(objectName)
-        cv2.putText(img, "Band "+objectName+" count: " + str(current_count[index]), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
-        initialHeight+=30
-        total_count = len(set(counter[index]))-1
-        cv2.putText(img, "Total "+objectName+" count: " + str(total_count), (10,initialHeight), 0, 0.8, (0,0,255), 2)
-        initialHeight+=30
+    if activateCounting:
+        initialHeight=60
+        for objectName in objectsToTrack:
+            index=objectsToTrack.index(objectName)
+            cv2.putText(img, "Zone "+objectName+" count: " + str(current_count[index]), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
+            initialHeight+=30
+            total_count = len(set(counter[index]))-1
+            cv2.putText(img, "Total "+objectName+" count: " + str(total_count), (10,initialHeight), 0, 0.8, (0,0,255), 2)
+            initialHeight+=30
+
+
 
     fps = 1./(time.time()-t1)
     cv2.putText(img, "FPS: {:.2f}".format(fps), (10,30), 0, 0.8, (0,0,255), 2)
-    cv2.resizeWindow(outputVideoName, 1024, 768)
+    #cv2.resizeWindow(outputVideoName, 1024, 768)
+    cv2.namedWindow(outputVideoName, cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty(outputVideoName,cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
     cv2.imshow(outputVideoName, img)
     out.write(img)
 
