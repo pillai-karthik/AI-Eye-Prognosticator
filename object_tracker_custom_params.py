@@ -20,8 +20,6 @@ from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
 
 ####CUSTOM PARAMETERS############################################################
-objectsToTrack=["person","car"]
-
 inputVideo='./inputs/video5.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
@@ -31,6 +29,7 @@ outputVideoName='output'
 
 #******* COUNTING FEATURE (Total Count + Zonal Count) *******
 activateCounting=False
+objectsToTrack=["person","car"]
 lineOrientationHorizontal=True
 #0.5 Means line will be on middle of video vertically, small is closer to top
 bandMidLineWrtHeightOrWidth=0.3
@@ -39,9 +38,14 @@ upDownBoundWrtMidLine=0.05
 
 
 #******* TRACKER TAIL FEATURE *******
-activateTrackerTail=True
+activateTrackerTail=False
 tailLengthInFrames=30
 
+
+#******* INCOMING OUTGOING FEATURE *******
+activateIncomingOutgoing=True
+objectsTrackInOut=["person","car"]
+incomingOutgoingLineHorizontal=True
 
 
 
@@ -77,6 +81,16 @@ if activateTrackerTail:
 counter = []
 for i in objectsToTrack:
     counter.append([-1])#FOR EACH OBJECT LIKE  PERSON OR CAR, A TOTAL COUNTER IS CREATED
+
+
+incomingTrackIdsList=[]
+outgoingTrackIdsList=[]
+incomingCount=0
+outgoingCount=0
+for i in objectsTrackInOut:
+    counter.append([-1])
+
+
 
 while True:
     _, img = vid.read()
@@ -140,7 +154,7 @@ while True:
                     continue
                 thickness = int(np.sqrt(64/float(j+1))*2)
                 cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
-################################################################################TRACKER TAIL#########
+#########################################################################################
 
 
         center_y = int(((bbox[1]) + (bbox[3]))/2) 
@@ -169,6 +183,38 @@ while True:
                         index=objectsToTrack.index(class_name)
                         current_count[index] += 1
                         counter[index].append(int(track.track_id))
+
+        if activateIncomingOutgoing:
+            if incomingOutgoingLineHorizontal:
+                cv2.line(img, (0, int(3*height/6+height/40)), (width, int(3*height/6+height/40)), (255, 0, 0), thickness=2)
+                cv2.line(img, (0, int(3*height/6-height/40)), (width, int(3*height/6-height/40)), (255, 0, 0), thickness=2)
+
+                cv2.line(img, (0, int(4*height/6+height/40)), (width, int(4*height/6+height/40)), (0, 0, 255), thickness=2)
+                cv2.line(img, (0, int(4*height/6-height/40)), (width, int(4*height/6-height/40)), (0, 0, 255), thickness=2)
+
+                if class_name in objectsTrackInOut:
+                    if center_y <= int(3*height/6+height/40) and center_y >= int(3*height/6-height/40):
+                        #Incoming zone touched
+                        objectTrackId=int(track.track_id)
+                        incomingTrackIdsList.append(objectTrackId)
+                        if objectTrackId not in outgoingTrackIdsList:
+                            incomingCount+=1
+
+                if class_name in objectsTrackInOut:
+                    if center_y <= int(4*height/6+height/40) and center_y >= int(4*height/6-height/40):
+                        #Outgoing zone touched
+                        objectTrackId=int(track.track_id)
+                        outgoingTrackIdsList.append(objectTrackId)
+                        if objectTrackId not in incomingTrackIdsList:
+                            outgoingCount+=1
+
+    if activateIncomingOutgoing:
+        initialHeight=60
+        cv2.putText(img, "Incoming: " + str(incomingCount), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
+        initialHeight+=30
+        cv2.putText(img, "Outgoing: " + str(outgoingCount), (10,initialHeight), 0, 0.8, (0,0,255), 2)
+        initialHeight+=30
+
 
     if activateCounting:
         initialHeight=60
