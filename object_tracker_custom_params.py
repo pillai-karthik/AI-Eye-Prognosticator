@@ -38,6 +38,10 @@ bandMidLineWrtHeightOrWidth=0.3
 upDownBoundWrtMidLine=0.05
 
 
+####### TRACKER TAIL FEATURE #######
+activateTrackerTail=True
+tailLengthInFrames=30
+
 
 
 
@@ -65,8 +69,10 @@ vid_fps =int(vid.get(cv2.CAP_PROP_FPS))
 vid_width,vid_height = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 out = cv2.VideoWriter('./data/video/'+outputVideoName+'.avi', codec, vid_fps, (vid_width, vid_height))
 
-from _collections import deque
-pts = [deque(maxlen=30) for _ in range(1000)]#more the maxlen, more longer is the tracker tail
+
+if activateTrackerTail:
+    from _collections import deque
+    pts = [deque(maxlen=tailLengthInFrames) for _ in range(1000)]#more the maxlen, more longer is the tracker tail
 
 counter = []
 for i in objectsToTrack:
@@ -125,19 +131,18 @@ while True:
         cv2.putText(img, class_name+"-"+str(track.track_id), (int(bbox[0]), int(bbox[1]-10)), 0, 0.5,
                     (255, 255, 255), 1)
 
-        center = (int(((bbox[0]) + (bbox[2]))/2), int(((bbox[1])+(bbox[3]))/2))
-        pts[track.track_id].append(center)#pts stores track ids list and inside that list, it has old centres of objects
-
-        for j in range(1, len(pts[track.track_id])):
-            if pts[track.track_id][j-1] is None or pts[track.track_id][j] is None:
-                continue
-            thickness = int(np.sqrt(64/float(j+1))*2)
-            cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
+        if activateTrackerTail:
+            center = (int(((bbox[0]) + (bbox[2]))/2), int(((bbox[1])+(bbox[3]))/2))
+            pts[track.track_id].append(center)#pts stores track ids list and inside that list, it has old centres of objects
+            for j in range(1, len(pts[track.track_id])):
+                if pts[track.track_id][j-1] is None or pts[track.track_id][j] is None:
+                    continue
+                thickness = int(np.sqrt(64/float(j+1))*2)
+                cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
 
 
         center_y = int(((bbox[1]) + (bbox[3]))/2) 
         center_x = int(((bbox[0]) + (bbox[2]))/2)
-
         height, width, _ = img.shape
 
         if activateCounting:
