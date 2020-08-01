@@ -20,7 +20,7 @@ from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video5.mp4'
+inputVideo='./inputs/video3.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 
@@ -85,10 +85,11 @@ for i in objectsToTrack:
 
 incomingTrackIdsList=[]
 outgoingTrackIdsList=[]
-incomingCount=0
-outgoingCount=0
+incomingCount=[]#in this list, index 0 will contain counts of objectsTrackInOut[0] object
+outgoingCount=[]
 for i in objectsTrackInOut:
-    counter.append([-1])
+    incomingCount.append(0)
+    outgoingCount.append(0)
 
 
 
@@ -183,7 +184,9 @@ while True:
                         index=objectsToTrack.index(class_name)
                         current_count[index] += 1
                         counter[index].append(int(track.track_id))
+#################################################################################COUNTING########
 
+###########INCOMING OUTGOING##############################################################################
         if activateIncomingOutgoing:
             if incomingOutgoingLineHorizontal:
                 cv2.line(img, (0, int(3*height/6+height/40)), (width, int(3*height/6+height/40)), (255, 0, 0), thickness=2)
@@ -196,31 +199,39 @@ while True:
                     if center_y <= int(3*height/6+height/40) and center_y >= int(3*height/6-height/40):
                         #Incoming zone touched
                         objectTrackId=int(track.track_id)
-                        incomingTrackIdsList.append(objectTrackId)
-                        if objectTrackId not in outgoingTrackIdsList:
-                            incomingCount+=1
+                        if objectTrackId not in incomingTrackIdsList:
+                            incomingTrackIdsList.append(objectTrackId)
+                            if objectTrackId not in outgoingTrackIdsList:
+                                index=objectsTrackInOut.index(class_name)
+                                incomingCount[index]+=1
+                                outgoingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
 
                 if class_name in objectsTrackInOut:
                     if center_y <= int(4*height/6+height/40) and center_y >= int(4*height/6-height/40):
                         #Outgoing zone touched
                         objectTrackId=int(track.track_id)
-                        outgoingTrackIdsList.append(objectTrackId)
-                        if objectTrackId not in incomingTrackIdsList:
-                            outgoingCount+=1
-
+                        if objectTrackId not in outgoingTrackIdsList:
+                            outgoingTrackIdsList.append(objectTrackId)
+                            if objectTrackId not in incomingTrackIdsList:
+                                index=objectsTrackInOut.index(class_name)
+                                outgoingCount[index]+=1
+                                incomingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
+    initialHeight=60
     if activateIncomingOutgoing:
-        initialHeight=60
-        cv2.putText(img, "Incoming: " + str(incomingCount), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
-        initialHeight+=30
-        cv2.putText(img, "Outgoing: " + str(outgoingCount), (10,initialHeight), 0, 0.8, (0,0,255), 2)
-        initialHeight+=30
+        for objectName in objectsTrackInOut:
+            index=objectsTrackInOut.index(objectName)
+            cv2.putText(img, "Incoming "+objectName+"s: " + str(incomingCount[index]), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
+            initialHeight+=30
+            cv2.putText(img, "Outgoing "+objectName+"s: " + str(outgoingCount[index]), (10,initialHeight), 0, 0.8, (0,0,255), 2)
+            initialHeight+=30
+###########################################################################INCOMING OUTGOING##############
 
 
+#######COUNTING##################################################################################
     if activateCounting:
-        initialHeight=60
         for objectName in objectsToTrack:
             index=objectsToTrack.index(objectName)
-            cv2.putText(img, "Zone "+objectName+" count: " + str(current_count[index]), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
+            cv2.putText(img, "Inside Zone "+objectName+" count: " + str(current_count[index]), (10, initialHeight), 0, 0.8, (0, 0, 255), 2)
             initialHeight+=30
             total_count = len(set(counter[index]))-1
             cv2.putText(img, "Total "+objectName+" count: " + str(total_count), (10,initialHeight), 0, 0.8, (0,0,255), 2)
