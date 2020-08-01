@@ -1,0 +1,4 @@
+d:
+cd D:\AI Eye Prognosticator
+conda activate tracker-cpu
+python object_tracker.py
