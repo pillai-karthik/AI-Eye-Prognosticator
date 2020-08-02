@@ -149,6 +149,10 @@ while True:
         cv2.putText(img, class_name+"-"+str(track.track_id), (int(bbox[0]), int(bbox[1]-10)), 0, 0.5,
                     (255, 255, 255), 1)
 
+        center_y = int(((bbox[1]) + (bbox[3]))/2) 
+        center_x = int(((bbox[0]) + (bbox[2]))/2)
+        height, width, _ = img.shape
+
 #######TRACKER TAIL##################################################################################
         if activateTrackerTail:
             center = (int(((bbox[0]) + (bbox[2]))/2), int(((bbox[1])+(bbox[3]))/2))
@@ -158,12 +162,7 @@ while True:
                     continue
                 thickness = int(np.sqrt(64/float(j+1))*2)
                 cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
-#########################################################################################
-
-
-        center_y = int(((bbox[1]) + (bbox[3]))/2) 
-        center_x = int(((bbox[0]) + (bbox[2]))/2)
-        height, width, _ = img.shape
+################################################################################TRACKER TAIL#########
 
 #######COUNTING##################################################################################
         if activateCounting:
@@ -259,7 +258,6 @@ while True:
             cv2.putText(img, "Outgoing "+objectName+"s: " + str(outgoingCount[index]), (10,initialHeight), 0, 0.8, (0,0,255), 2)
             initialHeight+=30
 ###########################################################################INCOMING OUTGOING##############
-
 
 #######COUNTING##################################################################################
     if activateCounting:
