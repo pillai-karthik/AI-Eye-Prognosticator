@@ -19,8 +19,11 @@ from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
 
+import math
+from itertools import combinations
+
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video3.mp4'
+inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 
@@ -43,7 +46,7 @@ tailLengthInFrames=30
 
 
 #******* INCOMING OUTGOING FEATURE *******
-activateIncomingOutgoing=True
+activateIncomingOutgoing=False
 objectsTrackInOut=["person","car"]
 incomingOutgoingLineHorizontal=True
 incomingLineWrtHeightOrWidth=0.4
@@ -135,6 +138,8 @@ while True:
 
     current_count = [0]*len(objectsToTrack)#FOR EACH OBJECT LIKE  PERSON OR CAR, A CURRENT(Band) COUNTER IS CREATED
 
+    centroid_dict=dict()
+
     for track in tracker.tracks:
         if not track.is_confirmed() or track.time_since_update >1:
             continue
@@ -152,6 +157,9 @@ while True:
         center_y = int(((bbox[1]) + (bbox[3]))/2) 
         center_x = int(((bbox[0]) + (bbox[2]))/2)
         height, width, _ = img.shape
+
+        if class_name=="person":
+            centroid_dict[track.track_id]=(int(center_x), int(center_y), int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))
 
 #######TRACKER TAIL##################################################################################
         if activateTrackerTail:
@@ -258,6 +266,36 @@ while True:
             cv2.putText(img, "Outgoing "+objectName+"s: " + str(outgoingCount[index]), (10,initialHeight), 0, 0.8, (0,0,255), 2)
             initialHeight+=30
 ###########################################################################INCOMING OUTGOING##############
+
+    red_social_dis_zone_list=[]
+    red_social_dis_line_list=[]
+    for (id1,p1), (id2,p2) in combinations(centroid_dict.items(),2):
+        dx,dy=p1[0]-p2[0], p1[1]-p2[1]
+        distance = math.sqrt(dx*dx + dy*dy)
+        if distance < 75:
+            if id1 not in red_social_dis_zone_list:
+                red_social_dis_zone_list.append(id1)
+                red_social_dis_line_list.append(p1[0:2])
+            if id2 not in red_social_dis_zone_list:
+                red_social_dis_zone_list.append(id2)
+                red_social_dis_line_list.append(p2[0:2])
+
+    for idx, box  in centroid_dict.items():
+        if idx in red_social_dis_zone_list:
+            cv2.rectangle(img, (box[2],box[3]),(box[4],box[5]), (0,0,255), 2)
+        else:
+            cv2.rectangle(img, (box[2],box[3]),(box[4],box[5]), (0,255,0), 2)
+
+    cv2.putText(img, "People at risk: "+str(len(red_social_dis_zone_list)), (10,initialHeight), 0, 0.8, (0,0,255), 2)
+    initialHeight+=30
+    for check in range(0, len(red_social_dis_line_list)-1):
+        start_point=red_social_dis_line_list[check]
+        end_point=red_social_dis_line_list[check+1]
+        check_line_x=abs(end_point[0]-start_point[0])
+        check_line_y=abs(end_point[1]-start_point[1])
+        if (check_line_x<75) and (check_line_y<75):
+            cv2.line(img, start_point, end_point, (0,0,255), 2)
+
 
 #######COUNTING##################################################################################
     if activateCounting:
