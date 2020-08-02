@@ -23,22 +23,22 @@ import math
 from itertools import combinations
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video5.mp4'
+inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='output'
-showClassName=False
+showClassName=True
 showTrackerId=False
 
 
-#******* COUNTING FEATURE (Total Count + Zonal Count) *******
+#******* COUNTING FEATURE (Total Count + Zonal(Band) Count) *******
 activateCounting=False
-objectsToTrack=["person","car"]
+objectsToTrack=["person"]
 lineOrientationHorizontal=True
 #0.5 Means line will be on middle of video vertically, small is closer to top
-bandMidLineWrtHeightOrWidth=0.3
+bandMidLineWrtHeightOrWidth=0.5
 #upperBound is height*upDownBoundWrtMidLine above mid line, similarly, lowerbound. Bigger the number, bigger is the area
-upDownBoundWrtMidLine=0.05
+upDownBoundWrtMidLine=0.1
 
 
 #******* TRACKER TAIL FEATURE *******
@@ -48,11 +48,11 @@ tailLengthInFrames=30
 
 #******* INCOMING OUTGOING FEATURE *******
 activateIncomingOutgoing=False
-objectsTrackInOut=["person","car"]
+objectsTrackInOut=["truck","car"]
 incomingOutgoingLineHorizontal=True
-incomingLineWrtHeightOrWidth=0.3
+incomingLineWrtHeightOrWidth=0.37
 incomingLineThicknessWrtHeightOrWidth=0.025
-outgoingLineWrtHeightOrWidth=0.4
+outgoingLineWrtHeightOrWidth=0.43
 outgoingLineThicknessWrtHeightOrWidth=0.025
 
 
