@@ -46,7 +46,10 @@ tailLengthInFrames=30
 activateIncomingOutgoing=True
 objectsTrackInOut=["person","car"]
 incomingOutgoingLineHorizontal=True
-
+incomingLineWrtHeightOrWidth=0.4
+incomingLineThicknessWrtHeightOrWidth=0.025
+outgoingLineWrtHeightOrWidth=0.6
+outgoingLineThicknessWrtHeightOrWidth=0.025
 
 
 
@@ -189,17 +192,18 @@ while True:
 ###########INCOMING OUTGOING##############################################################################
         if activateIncomingOutgoing:
             if incomingOutgoingLineHorizontal:
-                cv2.line(img, (0, int(3*height/6+height/40)), (width, int(3*height/6+height/40)), (255, 0, 0), thickness=2)
-                cv2.line(img, (0, int(3*height/6-height/40)), (width, int(3*height/6-height/40)), (255, 0, 0), thickness=2)
+                #Horizontal Orientation
+                cv2.line(img, (0, int(incomingLineWrtHeightOrWidth*height+incomingLineThicknessWrtHeightOrWidth*height)), (width, int(incomingLineWrtHeightOrWidth*height+incomingLineThicknessWrtHeightOrWidth*height)), (255, 0, 0), thickness=2)
+                cv2.line(img, (0, int(incomingLineWrtHeightOrWidth*height-incomingLineThicknessWrtHeightOrWidth*height)), (width, int(incomingLineWrtHeightOrWidth*height-incomingLineThicknessWrtHeightOrWidth*height)), (255, 0, 0), thickness=2)
 
-                cv2.line(img, (0, int(4*height/6+height/40)), (width, int(4*height/6+height/40)), (0, 0, 255), thickness=2)
-                cv2.line(img, (0, int(4*height/6-height/40)), (width, int(4*height/6-height/40)), (0, 0, 255), thickness=2)
+                cv2.line(img, (0, int(outgoingLineWrtHeightOrWidth*height+outgoingLineThicknessWrtHeightOrWidth*height)), (width, int(outgoingLineWrtHeightOrWidth*height+outgoingLineThicknessWrtHeightOrWidth*height)), (0, 0, 255), thickness=2)
+                cv2.line(img, (0, int(outgoingLineWrtHeightOrWidth*height-outgoingLineThicknessWrtHeightOrWidth*height)), (width, int(outgoingLineWrtHeightOrWidth*height-outgoingLineThicknessWrtHeightOrWidth*height)), (0, 0, 255), thickness=2)
 
                 if class_name in objectsTrackInOut:
-                    if center_y <= int(3*height/6+height/40) and center_y >= int(3*height/6-height/40):
+                    if center_y <= int(incomingLineWrtHeightOrWidth*height+incomingLineThicknessWrtHeightOrWidth*height) and center_y >= int(incomingLineWrtHeightOrWidth*height-incomingLineThicknessWrtHeightOrWidth*height):
                         #Incoming zone touched
                         objectTrackId=int(track.track_id)
-                        if objectTrackId not in incomingTrackIdsList:
+                        if objectTrackId not in incomingTrackIdsList:#Added because multiple same objectTrackId were appended to incomingTrackIdsList because of frames
                             incomingTrackIdsList.append(objectTrackId)
                             if objectTrackId not in outgoingTrackIdsList:
                                 index=objectsTrackInOut.index(class_name)
@@ -207,7 +211,7 @@ while True:
                                 outgoingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
 
                 if class_name in objectsTrackInOut:
-                    if center_y <= int(4*height/6+height/40) and center_y >= int(4*height/6-height/40):
+                    if center_y <= int(outgoingLineWrtHeightOrWidth*height+outgoingLineThicknessWrtHeightOrWidth*height) and center_y >= int(outgoingLineWrtHeightOrWidth*height-outgoingLineThicknessWrtHeightOrWidth*height):
                         #Outgoing zone touched
                         objectTrackId=int(track.track_id)
                         if objectTrackId not in outgoingTrackIdsList:
@@ -216,6 +220,36 @@ while True:
                                 index=objectsTrackInOut.index(class_name)
                                 outgoingCount[index]+=1
                                 incomingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
+            else:
+                #Vertical Orientation
+                cv2.line(img, (int(incomingLineWrtHeightOrWidth*width+incomingLineThicknessWrtHeightOrWidth*width), 0), (int(incomingLineWrtHeightOrWidth*width+incomingLineThicknessWrtHeightOrWidth*width), height), (255, 0, 0), thickness=2)
+                cv2.line(img, (int(incomingLineWrtHeightOrWidth*width-incomingLineThicknessWrtHeightOrWidth*width), 0), (int(incomingLineWrtHeightOrWidth*width-incomingLineThicknessWrtHeightOrWidth*width), height), (255, 0, 0), thickness=2)
+
+                cv2.line(img, (int(outgoingLineWrtHeightOrWidth*width+outgoingLineThicknessWrtHeightOrWidth*width), 0), (int(outgoingLineWrtHeightOrWidth*width+outgoingLineThicknessWrtHeightOrWidth*width), height), (0, 0, 255), thickness=2)
+                cv2.line(img, (int(outgoingLineWrtHeightOrWidth*width-outgoingLineThicknessWrtHeightOrWidth*width), 0), (int(outgoingLineWrtHeightOrWidth*width-outgoingLineThicknessWrtHeightOrWidth*width), height), (0, 0, 255), thickness=2)
+
+                if class_name in objectsTrackInOut:
+                    if center_x <= int(incomingLineWrtHeightOrWidth*width+incomingLineThicknessWrtHeightOrWidth*width) and center_x >= int(incomingLineWrtHeightOrWidth*width-incomingLineThicknessWrtHeightOrWidth*width):
+                        #Incoming zone touched
+                        objectTrackId=int(track.track_id)
+                        if objectTrackId not in incomingTrackIdsList:#Added because multiple same objectTrackId were appended to incomingTrackIdsList because of frames
+                            incomingTrackIdsList.append(objectTrackId)
+                            if objectTrackId not in outgoingTrackIdsList:
+                                index=objectsTrackInOut.index(class_name)
+                                incomingCount[index]+=1
+                                outgoingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
+
+                if class_name in objectsTrackInOut:
+                    if center_x <= int(outgoingLineWrtHeightOrWidth*width+outgoingLineThicknessWrtHeightOrWidth*width) and center_x >= int(outgoingLineWrtHeightOrWidth*width-outgoingLineThicknessWrtHeightOrWidth*width):
+                        #Outgoing zone touched
+                        objectTrackId=int(track.track_id)
+                        if objectTrackId not in outgoingTrackIdsList:
+                            outgoingTrackIdsList.append(objectTrackId)
+                            if objectTrackId not in incomingTrackIdsList:
+                                index=objectsTrackInOut.index(class_name)
+                                outgoingCount[index]+=1
+                                incomingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
+
     initialHeight=60
     if activateIncomingOutgoing:
         for objectName in objectsTrackInOut:
@@ -237,7 +271,8 @@ while True:
             cv2.putText(img, "Total "+objectName+" count: " + str(total_count), (10,initialHeight), 0, 0.8, (0,0,255), 2)
             initialHeight+=30
 #################################################################################COUNTING########
-
+    
+    cv2.putText(img,"Made by Karthik Pillai", (10,initialHeight), 0, 0.8, (0,0,255), 2)
 
     fps = 1./(time.time()-t1)
     cv2.putText(img, "FPS: {:.2f}".format(fps), (10,30), 0, 0.8, (0,0,255), 2)
