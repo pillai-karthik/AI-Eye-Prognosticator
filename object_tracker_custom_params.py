@@ -23,12 +23,13 @@ import math
 from itertools import combinations
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video4.mp4'
+inputVideo='./inputs/video1.avi'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='output'
 showClassName=True
 showTrackerId=False
+showRenderingVideo=False
 
 
 #******* COUNTING FEATURE (Total Count + Zonal(Band) Count) *******
@@ -107,7 +108,7 @@ for i in objectsTrackInOut:
 while True:
     _, img = vid.read()
     if img is None:
-        print('Completed')
+        print('COMPLETED')
         break
 
     img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -325,12 +326,17 @@ while True:
     fps = 1./(time.time()-t1)
     cv2.putText(img, "FPS: {:.2f}".format(fps), (10,30), 0, 0.8, (0,0,255), 2)
     #cv2.resizeWindow(outputVideoName, 1024, 768)
-    cv2.namedWindow(outputVideoName, cv2.WND_PROP_FULLSCREEN)
-    cv2.setWindowProperty(outputVideoName,cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
-    cv2.imshow(outputVideoName, img)
+    if showRenderingVideo:
+        cv2.namedWindow(outputVideoName, cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty(outputVideoName,cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+        cv2.imshow(outputVideoName, img)
+    else:
+        print("FPS: {:.2f}".format(fps))
+
     out.write(img)
 
     if cv2.waitKey(1) == ord('q'):
+        print("STOPPED")
         break
 
 vid.release()
