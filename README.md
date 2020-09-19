@@ -11,5 +11,14 @@
 * Predict most populated place
 
 # Screenshots
-### * Count Incoming & Outgoing cars
+### Count Incoming & Outgoing Vehicles
 ![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Traffic.png "1")
+
+### People at Risk - Social Distancing
+![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Social%20Distancing%20Covid.png "2")
+
+### Tracking Human Path
+![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Human%20path%20tracker.png "3")
+
+### Human Density & Population Counter
+![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Human%20density%20count.png "4")
