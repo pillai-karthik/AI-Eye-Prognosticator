@@ -10,7 +10,7 @@ class Detection(object):
     ----------
     tlwh : array_like
         Bounding box in format `(x, y, w, h)`.
-    confidence : float
+    confidence : float 
         Detector confidence score.
     feature : array_like
         A feature vector that describes the object contained in this image.

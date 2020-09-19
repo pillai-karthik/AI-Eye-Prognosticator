@@ -22,6 +22,7 @@ from tools import generate_detections as gdet
 import math
 from itertools import combinations
 
+
 ####CUSTOM PARAMETERS############################################################
 inputVideo='./inputs/footbal.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
