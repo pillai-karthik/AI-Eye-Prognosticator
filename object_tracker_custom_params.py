@@ -23,11 +23,11 @@ import math
 from itertools import combinations
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video1.avi'
+inputVideo='./inputs/footbal.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='output'
-showClassName=True
+showClassName=False
 showTrackerId=False
 showRenderingVideo=False
 
@@ -43,8 +43,9 @@ upDownBoundWrtMidLine=0.1
 
 
 #******* TRACKER TAIL FEATURE *******
-activateTrackerTail=False
+activateTrackerTail=True
 tailLengthInFrames=30
+variableThicknessOfTrackerLine=False
 
 
 #******* INCOMING OUTGOING FEATURE *******
@@ -178,7 +179,10 @@ while True:
             for j in range(1, len(pts[track.track_id])):
                 if pts[track.track_id][j-1] is None or pts[track.track_id][j] is None:
                     continue
-                thickness = int(np.sqrt(64/float(j+1))*2)
+                if variableThicknessOfTrackerLine:
+                    thickness = int(np.sqrt(64/float(j+1))*2)
+                else:
+                    thickness = 2
                 cv2.line(img, (pts[track.track_id][j-1]), (pts[track.track_id][j]), color, thickness)
 ################################################################################TRACKER TAIL#########
 
