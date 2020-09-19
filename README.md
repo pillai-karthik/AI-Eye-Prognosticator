@@ -9,3 +9,7 @@
 * Store stats of incoming & outgoing people
 * Predict future incoming & outgoing people
 * Predict most populated place
+
+# Screenshots
+### Count Incoming & Outgoing cars
+![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Traffic.png "1")
