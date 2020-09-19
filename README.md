@@ -11,5 +11,5 @@
 * Predict most populated place
 
 # Screenshots
-### Count Incoming & Outgoing cars
+### * Count Incoming & Outgoing cars
 ![alt text](https://github.com/karthik261099/AI-Eye-Prognosticator/blob/master/README/Traffic.png "1")
