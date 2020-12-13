@@ -24,13 +24,13 @@ from itertools import combinations
 
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/footbal.mp4'
+inputVideo='./inputs/peoplewalk.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='output'
-showClassName=False
+showClassName=True
 showTrackerId=False
-showRenderingVideo=False
+showRenderingVideo=True
 
 
 #******* COUNTING FEATURE (Total Count + Zonal(Band) Count) *******
@@ -45,7 +45,7 @@ upDownBoundWrtMidLine=0.1
 
 #******* TRACKER TAIL FEATURE *******
 activateTrackerTail=True
-tailLengthInFrames=30
+tailLengthInFrames=50
 variableThicknessOfTrackerLine=False
 
 
