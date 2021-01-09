@@ -24,7 +24,7 @@ from itertools import combinations
 
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/peoplewalk.mp4'
+inputVideo='./inputs/video5.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='output'
@@ -44,13 +44,13 @@ upDownBoundWrtMidLine=0.1
 
 
 #******* TRACKER TAIL FEATURE *******
-activateTrackerTail=True
+activateTrackerTail=False
 tailLengthInFrames=50
 variableThicknessOfTrackerLine=False
 
 
 #******* INCOMING OUTGOING FEATURE *******
-activateIncomingOutgoing=False
+activateIncomingOutgoing=True
 objectsTrackInOut=["truck","car"]
 incomingOutgoingLineHorizontal=True
 incomingLineWrtHeightOrWidth=0.37
