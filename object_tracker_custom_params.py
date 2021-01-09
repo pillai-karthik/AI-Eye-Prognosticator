@@ -9,7 +9,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
-from yolov3_tf2.models import YoloV3
+from yolov3_tf2.models import (YoloV3, YoloV3Tiny)
 from yolov3_tf2.dataset import transform_images
 from yolov3_tf2.utils import convert_boxes
 
@@ -23,14 +23,35 @@ import math
 from itertools import combinations
 
 
+
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video5.mp4'
+inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
-outputVideoName='output'
+outputVideoName='outputcustom2'
 showClassName=True
 showTrackerId=False
 showRenderingVideo=True
+
+
+#******* TINY WEIGHTS *******
+isTinyWeight=False
+
+#******* CUSTOM WEIGHTS *******
+customWeights=False
+if customWeights:
+    namesFile='./data/labels/custom.names'
+    if isTinyWeight:
+        weightsFilePath='./weights/yolov3-tiny-custom.tf'
+    else:
+        weightsFilePath='./weights/yolov3-custom.tf'
+else:
+    #Pretrained weights
+    namesFile='./data/labels/coco.names'
+    if isTinyWeight:
+        weightsFilePath='./weights/yolov3-tiny.tf'
+    else:
+        weightsFilePath='./weights/yolov3.tf'
 
 
 #******* COUNTING FEATURE (Total Count + Zonal(Band) Count) *******
@@ -50,7 +71,7 @@ variableThicknessOfTrackerLine=False
 
 
 #******* INCOMING OUTGOING FEATURE *******
-activateIncomingOutgoing=True
+activateIncomingOutgoing=False
 objectsTrackInOut=["truck","car"]
 incomingOutgoingLineHorizontal=True
 incomingLineWrtHeightOrWidth=0.37
@@ -67,9 +88,14 @@ distanceTreshold=75#in pixels
 #############################################################CUSTOM PARAMETERS###
 
 
-class_names = [c.strip() for c in open('./data/labels/coco.names').readlines()]
-yolo = YoloV3(classes=len(class_names))
-yolo.load_weights('./weights/yolov3.tf')
+class_names = [c.strip() for c in open(namesFile).readlines()]
+
+if isTinyWeight:
+    yolo = YoloV3Tiny(classes=len(class_names))
+else:
+    yolo = YoloV3(classes=len(class_names))
+
+yolo.load_weights(weightsFilePath)
 
 max_cosine_distance = 0.5
 nn_budget = None
