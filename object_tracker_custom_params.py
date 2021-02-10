@@ -22,6 +22,8 @@ from tools import generate_detections as gdet
 import math
 from itertools import combinations
 
+import os
+import datetime
 
 
 ####CUSTOM PARAMETERS############################################################
@@ -29,6 +31,7 @@ inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
 outputVideoName='outputnormal'
+outputFolderPath="./outputs/"+outputVideoName+"/"
 showClassName=True
 showTrackerId=True
 showRenderingVideo=True
@@ -85,6 +88,10 @@ activateSocialDistance=False
 distanceTreshold=75#in pixels
 
 
+#******* GENERATE HEAT MAP *******
+activateHeapMap=True
+
+
 #############################################################CUSTOM PARAMETERS###
 
 
@@ -111,7 +118,8 @@ vid = cv2.VideoCapture(inputVideo)
 codec = cv2.VideoWriter_fourcc(*'XVID')
 vid_fps =int(vid.get(cv2.CAP_PROP_FPS))
 vid_width,vid_height = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
-out = cv2.VideoWriter('./data/video/'+outputVideoName+'.avi', codec, vid_fps, (vid_width, vid_height))
+os.mkdir(outputFolderPath)
+out = cv2.VideoWriter(outputFolderPath+'Video_Output.avi', codec, vid_fps, (vid_width, vid_height))
 
 
 if activateTrackerTail:
@@ -132,12 +140,17 @@ for i in objectsTrackInOut:
     outgoingCount.append(0)
 
 
-
+isFirstImageSaved=False
 while True:
     _, img = vid.read()
     if img is None:
         print('COMPLETED')
         break
+
+    if activateHeapMap:
+        if isFirstImageSaved!=True:
+            FirstFrame=img.copy()
+            isFirstImageSaved=True
 
     img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img_in = tf.expand_dims(img_in, 0)
@@ -198,6 +211,11 @@ while True:
         if activateSocialDistance:
             if class_name=="person":
                 centroid_dict[track.track_id]=(int(center_x), int(center_y), int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))
+
+        if activateHeapMap:
+            center = (int(((bbox[0]) + (bbox[2]))/2), int(((bbox[1])+(bbox[3]))/2))
+            #cv2.line(FirstFrame, int(((bbox[0]) + (bbox[2]))/2),int(((bbox[1])+(bbox[3]))/2), color, 2)
+            FirstFrame = cv2.circle(FirstFrame, center, radius=0, color=(0, 0, 255), thickness=1)
 
 #######TRACKER TAIL##################################################################################
         if activateTrackerTail:
@@ -365,6 +383,9 @@ while True:
         print("FPS: {:.2f}".format(fps))
 
     out.write(img)
+
+    if activateHeapMap:
+        cv2.imwrite(outputFolderPath+"HeatMap_Output.jpg", FirstFrame)
 
     if cv2.waitKey(1) == ord('q'):
         print("STOPPED")
