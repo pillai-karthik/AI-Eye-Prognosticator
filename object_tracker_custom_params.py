@@ -28,9 +28,9 @@ from itertools import combinations
 inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
-outputVideoName='outputcustom2'
+outputVideoName='outputnormal'
 showClassName=True
-showTrackerId=False
+showTrackerId=True
 showRenderingVideo=True
 
 
@@ -65,14 +65,14 @@ upDownBoundWrtMidLine=0.1
 
 
 #******* TRACKER TAIL FEATURE *******
-activateTrackerTail=False
+activateTrackerTail=True
 tailLengthInFrames=50
 variableThicknessOfTrackerLine=False
 
 
 #******* INCOMING OUTGOING FEATURE *******
-activateIncomingOutgoing=False
-objectsTrackInOut=["truck","car"]
+activateIncomingOutgoing=True
+objectsTrackInOut=["person"]#["truck","car"]
 incomingOutgoingLineHorizontal=True
 incomingLineWrtHeightOrWidth=0.37
 incomingLineThicknessWrtHeightOrWidth=0.025
