@@ -1,4 +1,4 @@
-weights/*
-data/video/*
-outputs_of_features/*
-outputs/*
+Computer_Vision/weights/*
+Computer_Vision/data/video/*
+Computer_Vision/outputs_of_features/*
+Computer_Vision/outputs/*
