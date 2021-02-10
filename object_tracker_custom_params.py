@@ -25,17 +25,18 @@ from itertools import combinations
 import os
 import datetime
 
+import mysql.connector
 
 ####CUSTOM PARAMETERS############################################################
 inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
-outputVideoName='outputnormal'
+outputVideoName='HeapMapFeature1'
 outputFolderPath="./outputs/"+outputVideoName+"/"
 showClassName=True
 showTrackerId=True
 showRenderingVideo=True
-
+storeDataInDB=False
 
 #******* TINY WEIGHTS *******
 isTinyWeight=False
@@ -94,6 +95,9 @@ activateHeapMap=True
 
 #############################################################CUSTOM PARAMETERS###
 
+if storeDataInDB:
+    mydb = mysql.connector.connect(host="localhost",user="root",password="",database="ai_eye")
+    mycursor = mydb.cursor()
 
 class_names = [c.strip() for c in open(namesFile).readlines()]
 
@@ -274,6 +278,9 @@ while True:
                             if objectTrackId not in outgoingTrackIdsList:
                                 index=objectsTrackInOut.index(class_name)
                                 incomingCount[index]+=1
+                                if storeDataInDB:
+                                    mycursor.execute("INSERT INTO `detections`(`class_name`, `tracking_id`, `isIncoming`) VALUES ('"+class_name+"',"+str(objectTrackId)+",1)")
+                                    mydb.commit()
                                 outgoingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
 
                 if class_name in objectsTrackInOut:
@@ -285,6 +292,9 @@ while True:
                             if objectTrackId not in incomingTrackIdsList:
                                 index=objectsTrackInOut.index(class_name)
                                 outgoingCount[index]+=1
+                                if storeDataInDB:
+                                    mycursor.execute("INSERT INTO `detections`(`class_name`, `tracking_id`, `isIncoming`) VALUES ('"+class_name+"',"+str(objectTrackId)+",0)")
+                                    mydb.commit()
                                 incomingTrackIdsList.append(objectTrackId)#Added so that a person is only counted once
             else:
                 #Vertical Orientation
