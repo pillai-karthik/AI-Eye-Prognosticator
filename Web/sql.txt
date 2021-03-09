@@ -1,0 +1,16 @@
+SELECT `timestamp`, count(*)  As count
+FROM `detections`
+GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`), second(`timestamp`)
+
+SELECT `timestamp`, count(*) As count FROM `detections` WHERE `timestamp` BETWEEN "2021-02-11 12:49:00" AND "2021-02-11 12:51:00" GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`)
+
+
+SELECT `timestamp`, count(*)  As count
+FROM `detections`
+WHERE `timestamp` BETWEEN "2021-02-11 00:00:00" AND "2021-02-11 23:59:59"
+GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`)
+
+SELECT `timestamp`, count(*)  As count
+FROM `detections`
+WHERE `timestamp` BETWEEN "2021-02-11 12:00:00" AND "2021-02-11 12:59:59"
+GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`)

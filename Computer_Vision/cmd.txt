@@ -5,7 +5,7 @@ python object_tracker_custom_params.py
 
 
 c:
-cd C:\xampp\htdocs\AI-Eye-Prognosticator\Computer_Vision
+cd C:\xampp\htdocs\AI-Eye-Prognosticator
 git add .
 git status
 git commit -m""

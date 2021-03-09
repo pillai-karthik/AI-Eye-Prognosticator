@@ -31,12 +31,12 @@ import mysql.connector
 inputVideo='./inputs/video4.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
-outputVideoName='HeapMapFeature1'
+outputVideoName='Croptest'
 outputFolderPath="./outputs/"+outputVideoName+"/"
 showClassName=True
 showTrackerId=True
 showRenderingVideo=True
-storeDataInDB=False
+storeDataInDB=True
 
 #******* TINY WEIGHTS *******
 isTinyWeight=False
