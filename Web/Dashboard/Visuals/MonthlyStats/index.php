@@ -17,23 +17,23 @@ $dataPoints2=array();
 
 if(!mysqli_connect_error()){
 
-	if(isset($_GET['selectedDate']) AND $_GET['selectedDate']!=""){
-		for($hour=0;$hour<=23;$hour++){
+	if(isset($_GET['selectedMonth']) AND $_GET['selectedMonth']!=""){
+		for($date=1;$date<=31;$date++){
 
-			$paddedHour=sprintf('%02d', $hour);
+			$paddedDate=sprintf('%02d', $date);
 
 			$query="SELECT `timestamp`, count(*)  As count
 				FROM `detections`
-				WHERE `isIncoming`=1 AND `timestamp` BETWEEN '".$_GET['selectedDate']." ".$paddedHour.":00:00' AND '".$_GET['selectedDate']." ".$paddedHour.":59:59'";
+				WHERE `isIncoming`=1 AND `timestamp` BETWEEN '".$_GET['selectedMonth']."-".$paddedDate." 00:00:00' AND '".$_GET['selectedMonth']."-".$paddedDate." 23:59:59'";
 
 
 			$result=mysqli_query($link,$query);
 
 			$row=mysqli_fetch_array($result);
 
-			$timestamp=$paddedHour.':00-'.$paddedHour.':59';
+			$label=$date;
 			$count=$row['count'];
-			$singleData=array("label"=> $timestamp,"y"=> $count);
+			$singleData=array("label"=> $label,"y"=> $count);
 
 			array_push($dataPoints1,$singleData);
 
@@ -45,23 +45,23 @@ if(!mysqli_connect_error()){
 
 if(!mysqli_connect_error()){
 
-	if(isset($_GET['selectedDate']) AND $_GET['selectedDate']!=""){
-		for($hour=0;$hour<=23;$hour++){
+	if(isset($_GET['selectedMonth']) AND $_GET['selectedMonth']!=""){
+		for($date=1;$date<=31;$date++){
 
-			$paddedHour=sprintf('%02d', $hour);
+			$paddedDate=sprintf('%02d', $date);
 
 			$query="SELECT `timestamp`, count(*)  As count
 				FROM `detections`
-				WHERE `isIncoming`=0 AND `timestamp` BETWEEN '".$_GET['selectedDate']." ".$paddedHour.":00:00' AND '".$_GET['selectedDate']." ".$paddedHour.":59:59'";
+				WHERE `isIncoming`=0 AND `timestamp` BETWEEN '".$_GET['selectedMonth']."-".$paddedDate." 00:00:00' AND '".$_GET['selectedMonth']."-".$paddedDate." 23:59:59'";
 
 
 			$result=mysqli_query($link,$query);
 
 			$row=mysqli_fetch_array($result);
 
-			$timestamp=$paddedHour.':00-'.$paddedHour.':59';
+			$label=$date;
 			$count=$row['count'];
-			$singleData=array("label"=> $timestamp,"y"=> $count);
+			$singleData=array("label"=> $label,"y"=> $count);
 
 			array_push($dataPoints2,$singleData);
 
@@ -71,48 +71,32 @@ if(!mysqli_connect_error()){
 }
 
 
-
 // if(!mysqli_connect_error()){
-// 	$query="SELECT `timestamp`, count(*)  As count
-// 			FROM `detections`
-// 			WHERE `isIncoming`=1 AND `timestamp` BETWEEN '2021-02-11 12:00:00' AND '2021-02-11 12:59:59'
-// 			GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`)";
 
-// 	$result=mysqli_query($link,$query);
-// 	if(mysqli_num_rows($result)>0){
-// 		while ($row=mysqli_fetch_array($result)) {
-//       		$timestamp=$row['timestamp'];
-//       		$count=$row['count'];
-//       		// $singleData=array("x"=> $timestamp,"y"=> $count);
-//       		$singleData=array("label"=> substr($timestamp, 0, -3),"y"=> $count);
+// 	if(isset($_GET['selectedMonth']) AND $_GET['selectedMonth']!=""){
+// 		for($hour=0;$hour<=23;$hour++){
 
-//       		array_push($dataPoints1,$singleData);
-//       	}
+// 			$paddedHour=sprintf('%02d', $hour);
+
+// 			$query="SELECT `timestamp`, count(*)  As count
+// 				FROM `detections`
+// 				WHERE `isIncoming`=0 AND `timestamp` BETWEEN '".$_GET['selectedMonth']." ".$paddedHour.":00:00' AND '".$_GET['selectedMonth']." ".$paddedHour.":59:59'";
+
+
+// 			$result=mysqli_query($link,$query);
+
+// 			$row=mysqli_fetch_array($result);
+
+// 			$timestamp=$paddedHour.':00-'.$paddedHour.':59';
+// 			$count=$row['count'];
+// 			$singleData=array("label"=> $timestamp,"y"=> $count);
+
+// 			array_push($dataPoints2,$singleData);
+
+// 		}
 // 	}
 
 // }
-
-
-// if(!mysqli_connect_error()){
-// 	$query="SELECT `timestamp`, count(*)  As count
-// 			FROM `detections`
-// 			WHERE `isIncoming`=0 AND `timestamp` BETWEEN '2021-02-11 12:00:00' AND '2021-02-11 12:59:59'
-// 			GROUP BY year( `timestamp` ), month( `timestamp` ), day( `timestamp` ), hour(`timestamp`), minute(`timestamp`)";
-
-// 	$result=mysqli_query($link,$query);
-// 	if(mysqli_num_rows($result)>0){
-// 		while ($row=mysqli_fetch_array($result)) {
-//       		$timestamp=$row['timestamp'];
-//       		$count=$row['count'];
-//       		// $singleData=array("x"=> $timestamp,"y"=> $count);
-//       		$singleData=array("label"=> substr($timestamp, 0, -3),"y"=> $count);
-
-//       		array_push($dataPoints2,$singleData);
-//       	}
-// 	}
-
-// }
- 
 
 
 ?>
@@ -178,16 +162,16 @@ if(!mysqli_connect_error()){
 <body>
 
 <form class="alert alert-primary" method="GET" style="padding: 10px; border: 3px solid black; margin: 15px; border-radius: 20px;">
-	<label for="selectedDate" style="font-size: 22px; margin-right: 10px; font-weight: bold;">SELECT DATE</label>
-	<input type="date" id="selectedDate" name="selectedDate" 
-	value="<?php if(isset($_GET['selectedDate']) AND $_GET['selectedDate']!="") {echo $_GET['selectedDate'];}?>">
+	<label for="selectedMonth" style="font-size: 22px; margin-right: 10px; font-weight: bold;">SELECT MONTH</label>
+	<input type="month" id="selectedMonth" name="selectedMonth" 
+	value="<?php if(isset($_GET['selectedMonth']) AND $_GET['selectedMonth']!="") {echo $_GET['selectedMonth'];}?>">
 	<input type="submit" class="btn btn-primary" style="font-weight: bold; margin-left: 10px;" value="SHOW RESULT">
 </form>
 
-<?php if(isset($_GET['selectedDate']) AND $_GET['selectedDate']!="") : ?>
+<?php if(isset($_GET['selectedMonth']) AND $_GET['selectedMonth']!="") : ?>
 
 	<div class="alert alert-success" role="alert" style="margin: 10px 15px; text-align: center; font-weight: bold;font-size: 20px;">
-	  SELECTED DATE : <span style="font-size: 25px; margin-left: 5px;"><?php echo $_GET['selectedDate']; ?></span>
+	  SELECTED MONTH : <span style="font-size: 25px; margin-left: 5px;"><?php echo $_GET['selectedMonth']; ?></span>
 	</div>
 
 

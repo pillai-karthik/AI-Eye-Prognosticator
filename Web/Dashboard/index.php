@@ -47,11 +47,11 @@ if(!isset($_SESSION['userID'])){
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Data Visualization</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
+                            <a href="#" onclick="MonthlyStats()">Selected Month's Stats </a>
+                        </li>
+                        <li>
                             <a href="#" onclick="HourlyStats()">Selected Date's Hourly Stats </a>
                         </li>
-                        <!-- <li>
-                            <a href="#" onclick="verifiedApplicants()">Verified Applicants</a>
-                        </li> -->
                     </ul>
                 </li>
 
@@ -130,9 +130,9 @@ if(!isset($_SESSION['userID'])){
           document.getElementById("contentFrame").src = "./Visuals/HourlyStats/";
         }
 
-        // function verifiedApplicants(){
-        //     document.getElementById("contentFrame").src = "./verifiedApplicants/";
-        // }
+        function MonthlyStats(){
+            document.getElementById("contentFrame").src = "./Visuals/MonthlyStats/";
+        }
 
 
         $(document).ready(function () {
