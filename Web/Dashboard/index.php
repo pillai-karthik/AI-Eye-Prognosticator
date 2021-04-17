@@ -47,10 +47,13 @@ if(!isset($_SESSION['userID'])){
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Data Visualization</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
+                            <a href="#" onclick="HourlyStats()">Selected Date's Stats </a>
+                        </li>
+                        <li>
                             <a href="#" onclick="MonthlyStats()">Selected Month's Stats </a>
                         </li>
                         <li>
-                            <a href="#" onclick="HourlyStats()">Selected Date's Hourly Stats </a>
+                            <a href="#" onclick="YearlyStats()">Selected Year's Stats </a>
                         </li>
                     </ul>
                 </li>
@@ -134,6 +137,9 @@ if(!isset($_SESSION['userID'])){
             document.getElementById("contentFrame").src = "./Visuals/MonthlyStats/";
         }
 
+        function YearlyStats(){
+            document.getElementById("contentFrame").src = "./Visuals/YearlyStats/";
+        }
 
         $(document).ready(function () {
             $("#sidebar").mCustomScrollbar({
