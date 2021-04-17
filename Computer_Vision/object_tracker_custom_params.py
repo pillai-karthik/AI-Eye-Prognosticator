@@ -28,15 +28,15 @@ import datetime
 import mysql.connector
 
 ####CUSTOM PARAMETERS############################################################
-inputVideo='./inputs/video4.mp4'
+inputVideo='./inputs/football.mp4'
 # inputVideo='http://192.168.0.25:8080/video'#IP WebCam App
 # inputVideo=0
-outputVideoName='Croptest'
+outputVideoName='competition'
 outputFolderPath="./outputs/"+outputVideoName+"/"
 showClassName=True
 showTrackerId=True
 showRenderingVideo=True
-storeDataInDB=True
+storeDataInDB=False
 
 #******* TINY WEIGHTS *******
 isTinyWeight=False
@@ -75,7 +75,7 @@ variableThicknessOfTrackerLine=False
 
 
 #******* INCOMING OUTGOING FEATURE *******
-activateIncomingOutgoing=True
+activateIncomingOutgoing=False
 objectsTrackInOut=["person"]#["truck","car"]
 incomingOutgoingLineHorizontal=True
 incomingLineWrtHeightOrWidth=0.37

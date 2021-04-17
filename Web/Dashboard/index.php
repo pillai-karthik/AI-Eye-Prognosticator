@@ -47,11 +47,11 @@ if(!isset($_SESSION['userID'])){
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Data Visualization</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
-                            <a href="#" onclick="HourlyStats()">Hourly Visuals</a>
+                            <a href="#" onclick="HourlyStats()">Selected Date's Hourly Stats </a>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="#" onclick="verifiedApplicants()">Verified Applicants</a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
 
